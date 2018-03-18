@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+    <string name="menuTitle1">Most Popular</string>
+    <string name="menuTitle2">Top Rated</string>
+</resources>
