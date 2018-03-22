@@ -47,6 +47,7 @@ public  static URL urlForPopular(){
     Uri uri= Uri.parse(BASE_POPULAR_URL).buildUpon()
             .appendQueryParameter(PARAM_KEY,API_KEY).build();
 
+
 URL url=null;
 try{
     url =new URL(uri.toString());
@@ -58,6 +59,33 @@ catch (MalformedURLException e)
 
 return url;
 }
+
+
+/*
+******************************************************************
+THIS function/method is used to build the image url but instead of this i used the get image path in the result class
+ and pass the remaining url in it and build the url
+
+ Right now in the Adapter class this method call is commented if want to use this uncomment sall the function implementaion and
+ uncommnet in the Adapter class as well
+******************************************************************
+
+    public  static URL urlForImage(String imagepath){
+        Uri uri= Uri.parse(FULL_IMAGE_URL).buildUpon().appendPath(imagepath).build();
+
+
+        URL url=null;
+        try{
+            url =new URL(uri.toString());
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+*/
 
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {

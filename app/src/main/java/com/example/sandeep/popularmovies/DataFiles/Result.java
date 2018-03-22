@@ -1,8 +1,16 @@
 package com.example.sandeep.popularmovies.DataFiles;
 
+import java.lang.reflect.Type;
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+
 /*
 **this class data will be used for the app since it is the data which we get when we first run the api in one page
 
@@ -76,11 +84,13 @@ public class Result {
         this.video = video;
     }
 
-    public Double getVoteAverage() {
-        return voteAverage;
+    public String getVoteAverage()
+    {
+        return "( "+voteAverage.toString()+"/10 )";
     }
 
-    public void setVoteAverage(Double voteAverage) {
+    public void setVoteAverage(Double voteAverage)
+    {
         this.voteAverage = voteAverage;
     }
 
@@ -100,8 +110,10 @@ public class Result {
         this.popularity = popularity;
     }
 
-    public String getPosterPath() {
-        return posterPath;
+    public String getPosterPath()
+    {
+        String base_url=" http://image.tmdb.org/t/p/w185/";
+        return base_url+posterPath;
     }
 
     public void setPosterPath(String posterPath) {
@@ -162,6 +174,17 @@ public class Result {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+
+    public static List<Result> DataFromJSON(String jsonstring){
+        Gson gson =new Gson();
+        JsonElement jsonElement = new Gson().fromJson(jsonstring,JsonElement.class);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("results");
+        Type listType = new TypeToken<List<Result>>()
+        {}.getType();
+        return gson.fromJson(jsonArray.toString(),listType);
     }
 
 }

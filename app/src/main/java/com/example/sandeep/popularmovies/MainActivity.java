@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,26 +16,51 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sandeep.popularmovies.DataFiles.AdapterForRecyclerView;
+import com.example.sandeep.popularmovies.DataFiles.Result;
 import com.example.sandeep.popularmovies.utilities.NetworkUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterForRecyclerView.ListItemClickListener
+{
+
+    private static RecyclerView movieRecyclerView;
+    private static AdapterForRecyclerView movieAdapter;
+    GridLayoutManager layoutForMovie;
+    private int columns;
     TextView tv_showData;
-    ProgressBar spinner;
+  public static   ProgressBar spinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+       columns=2;
+        // columns = getResources().getInteger(R.integer.movie_column);
+    movieRecyclerView=(RecyclerView)findViewById(R.id.rv_movie_detail);
     tv_showData=(TextView)findViewById(R.id.tv_showData);
     spinner=(ProgressBar) findViewById(R.id.spinner);
 
+        layoutForMovie=new GridLayoutManager(this,columns, LinearLayoutManager.VERTICAL,false);
+        movieRecyclerView.setLayoutManager(layoutForMovie);
+        movieRecyclerView.setHasFixedSize(true);
+       // movieAdapter=new AdapterForRecyclerView(this);
+        movieAdapter=new AdapterForRecyclerView(MainActivity.this);
+        movieRecyclerView.setAdapter(movieAdapter);
+        makePopularUrl();
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
 
     }
-    public class MovieTask extends AsyncTask<URL ,Void, String>{
+
+    public static class MovieTask extends AsyncTask<URL ,Void, List<Result>>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -40,28 +68,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(URL... urls) {
-            URL popularUrl = urls[0];
-            String movieSearchResults = callHttp(popularUrl);
-            return movieSearchResults;
+        protected List<Result> doInBackground(URL... urls)
+        {
+            List<Result> results=null;
+            try{
+                URL popularUrl = urls[0];
+                String movieSearchResults = callHttp(popularUrl);
+                results=Result.DataFromJSON(movieSearchResults);
+                return results;
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+                return null;
+            }
         }
-            /*this is the other way of doing without the method callhttp
-*   String movieSearchResults = null;
-*          try {
-*               movieSearchResults = NetworkUtils.getResponseFromHttpUrl(popularUrl);
-*               //tv_showData.setText(movieSearchResults);
-*          } catch (IOException e) {
-*               e.printStackTrace();
-*
-*           }
-* return movieSearchResults;
-*/
         @Override
-        protected void onPostExecute(String movieSearchReults) {
+        protected void onPostExecute(List<Result> movieSearchReults)
+        {
            spinner.setVisibility(View.INVISIBLE);
-            if(movieSearchReults!=null && !movieSearchReults.equals("")){
-                tv_showData.setText(movieSearchReults);
 
+            if(movieSearchReults!=null)
+            {
+                movieAdapter.setData(movieSearchReults);
+                movieAdapter.notifyDataSetChanged();
             }
         }
 
@@ -72,9 +101,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-
-
         return true;
+    }
+
+    public static void makePopularUrl()
+    {
+            //String movieUrl = null;
+            URL builtUrl = NetworkUtils.urlForPopular();
+            new MovieTask().execute(builtUrl);
     }
 
     @Override
@@ -82,12 +116,8 @@ public class MainActivity extends AppCompatActivity {
         int ItemOfMenu=item.getItemId();
         if(ItemOfMenu==R.id.mostPopular)
         {
-            Context context=MainActivity.this;
+            //Context context=MainActivity.this;
             //Toast.makeText(this, "You clicked most popular", Toast.LENGTH_SHORT).show();
-            URL popularMoviesUrl = NetworkUtils.urlForPopular();
-            tv_showData.setText(popularMoviesUrl.toString()+"\n\n\n");
-            //tv_showData.setText(callHttp(popularMoviesUrl).toString());  // NOTES: By using this we will get a NetworkOnMainthread error which will solve by using AsyncTask
-            new MovieTask().execute(popularMoviesUrl);
 
         }
         if (ItemOfMenu==R.id.topRated)
@@ -95,15 +125,11 @@ public class MainActivity extends AppCompatActivity {
             Context context=MainActivity.this;
             Toast.makeText(this, "you clicked top rated", Toast.LENGTH_SHORT).show();
         }
-
         return super.onOptionsItemSelected(item);
 
 }
-/*
-
-this method(callhttp) is used for to get the json data from the url
-*/
-        public String callHttp(URL fullUrl){
+        public static String callHttp(URL fullUrl)
+        {
         String SearchResults = null;
         try {
         SearchResults = NetworkUtils.getResponseFromHttpUrl(fullUrl);
