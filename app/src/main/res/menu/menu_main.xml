@@ -13,6 +13,12 @@
         android:title="@string/menuTitle2"
        ></item>
 
+    <item android:id="@+id/refreshButton"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_action_name"
+        android:title="Refresh"></item>
+
 
 
 </menu>

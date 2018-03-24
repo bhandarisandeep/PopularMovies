@@ -1,5 +1,8 @@
 package com.example.sandeep.popularmovies.DataFiles;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -15,7 +18,7 @@ import com.google.gson.reflect.TypeToken;
 **this class data will be used for the app since it is the data which we get when we first run the api in one page
 
  */
-public class Result {
+public class Result implements Parcelable {
 
     @SerializedName("vote_count")
     @Expose
@@ -28,7 +31,7 @@ public class Result {
     private Boolean video;
     @SerializedName("vote_average")
     @Expose
-    private Double voteAverage;
+    private Float voteAverage;
     @SerializedName("title")
     @Expose
     private String title;
@@ -60,67 +63,184 @@ public class Result {
     @Expose
     private String releaseDate;
 
-    public Integer getVoteCount() {
+/*Constructor*/
+
+    public Result(){}
+
+    public Result(int movieId, String movieTitle,
+                  String moviePosterPath,
+                  String movieLanguage,
+                  String movieOverview,
+                  String movieReleaseDate,
+                  Float movieRatings) {
+
+
+        id=movieId;
+        title=movieTitle;
+        posterPath=moviePosterPath;
+        originalLanguage=movieLanguage;
+        overview=movieOverview;
+        releaseDate=movieReleaseDate;
+        voteAverage=movieRatings;
+    }
+
+    public Result( String title, String posterPath,
+            String originalLanguage,
+            String overview,
+            String releaseDate,
+            Float voteAverage)
+    {
+      this.title=title;
+      this.posterPath=posterPath;
+      this.overview=overview;
+      this.originalLanguage=originalLanguage;
+      this.releaseDate=releaseDate;
+      this.voteAverage=voteAverage;
+    }
+
+
+
+
+    protected Result(Parcel in) {
+        if (in.readByte() == 0) {
+            voteCount = null;
+        } else {
+            voteCount = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        byte tmpVideo = in.readByte();
+        video = tmpVideo == 0 ? null : tmpVideo == 1;
+        if (in.readByte() == 0) {
+            voteAverage = null;
+        } else {
+            voteAverage = in.readFloat();
+        }
+        title = in.readString();
+        if (in.readByte() == 0) {
+            popularity = null;
+        } else {
+            popularity = in.readDouble();
+        }
+        posterPath = in.readString();
+        originalLanguage = in.readString();
+        originalTitle = in.readString();
+        backdropPath = in.readString();
+        byte tmpAdult = in.readByte();
+        adult = tmpAdult == 0 ? null : tmpAdult == 1;
+        overview = in.readString();
+        releaseDate = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(posterPath);
+        dest.writeString(title);
+        dest.writeString(originalLanguage);
+        dest.writeDouble(voteAverage);
+        dest.writeString(releaseDate);
+        dest.writeString(overview);
+        dest.writeInt(id);
+
+    }
+
+    public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[0];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    public Integer getVoteCount()
+    {
         return voteCount;
     }
 
-    public void setVoteCount(Integer voteCount) {
+    public void setVoteCount(Integer voteCount)
+    {
         this.voteCount = voteCount;
     }
 
-    public Integer getId() {
+    public Integer getId()
+    {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id)
+    {
         this.id = id;
     }
 
-    public Boolean getVideo() {
+    public Boolean getVideo()
+    {
         return video;
     }
 
-    public void setVideo(Boolean video) {
+    public void setVideo(Boolean video)
+    {
         this.video = video;
     }
 
     public String getVoteAverage()
+
+
     {
         return "( "+voteAverage.toString()+"/10 )";
     }
 
-    public void setVoteAverage(Double voteAverage)
+    public void setVoteAverage(Float voteAverage)
+
     {
         this.voteAverage = voteAverage;
     }
 
-    public String getTitle() {
+    public String getTitle()
+    {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title)
+    {
         this.title = title;
     }
 
-    public Double getPopularity() {
+    public Double getPopularity()
+    {
         return popularity;
     }
 
-    public void setPopularity(Double popularity) {
+    public void setPopularity(Double popularity)
+    {
         this.popularity = popularity;
     }
 
     public String getPosterPath()
     {
-        String base_url=" http://image.tmdb.org/t/p/w185/";
-        return base_url+posterPath;
+        String base_url="http://image.tmdb.org/t/p/w500";
+        return (base_url+posterPath);
     }
 
-    public void setPosterPath(String posterPath) {
+    public void setPosterPath(String posterPath)
+    {
         this.posterPath = posterPath;
     }
 
-    public String getOriginalLanguage() {
+    public String getOriginalLanguage()
+    {
         return originalLanguage;
     }
 
@@ -128,23 +248,28 @@ public class Result {
         this.originalLanguage = originalLanguage;
     }
 
-    public String getOriginalTitle() {
+    public String getOriginalTitle()
+    {
         return originalTitle;
     }
 
-    public void setOriginalTitle(String originalTitle) {
+    public void setOriginalTitle(String originalTitle)
+    {
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
+    public List<Integer> getGenreIds()
+    {
         return genreIds;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
+    public void setGenreIds(List<Integer> genreIds)
+    {
         this.genreIds = genreIds;
     }
 
-    public String getBackdropPath() {
+    public String getBackdropPath()
+    {
         return backdropPath;
     }
 
@@ -186,5 +311,7 @@ public class Result {
         {}.getType();
         return gson.fromJson(jsonArray.toString(),listType);
     }
+
+
 
 }

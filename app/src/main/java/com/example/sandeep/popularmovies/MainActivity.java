@@ -1,6 +1,7 @@
 package com.example.sandeep.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +34,9 @@ public class MainActivity extends AppCompatActivity implements AdapterForRecycle
     private static AdapterForRecyclerView movieAdapter;
     GridLayoutManager layoutForMovie;
     private int columns;
-    TextView tv_showData;
-  public static   ProgressBar spinner;
+    public static TextView tv_showData;
+    public static   ProgressBar spinner;
+    private static final String TAG1 = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,22 +45,41 @@ public class MainActivity extends AppCompatActivity implements AdapterForRecycle
 
        columns=2;
         // columns = getResources().getInteger(R.integer.movie_column);
-    movieRecyclerView=(RecyclerView)findViewById(R.id.rv_movie_detail);
-    tv_showData=(TextView)findViewById(R.id.tv_showData);
-    spinner=(ProgressBar) findViewById(R.id.spinner);
+       movieRecyclerView=(RecyclerView)findViewById(R.id.rv_movie_detail);
+       tv_showData=(TextView)findViewById(R.id.tv_showErrorMes);
+       spinner=(ProgressBar) findViewById(R.id.spinner);
 
         layoutForMovie=new GridLayoutManager(this,columns, LinearLayoutManager.VERTICAL,false);
         movieRecyclerView.setLayoutManager(layoutForMovie);
         movieRecyclerView.setHasFixedSize(true);
        // movieAdapter=new AdapterForRecyclerView(this);
-        movieAdapter=new AdapterForRecyclerView(MainActivity.this);
+        movieAdapter=new AdapterForRecyclerView(MainActivity.this,this);
         movieRecyclerView.setAdapter(movieAdapter);
-        makePopularUrl();
+        makeUrl(NetworkUtils.getBaseUrl());
     }
 
     @Override
-    public void onListItemClick(int clickedItemIndex) {
+    public void onListItemClick(Result movieDataFromAdapterForIntent) {
+        Context parentClass=MainActivity.this;
+        Class childClass=MovieDetailsAfterClick.class;
+        Intent passDataToChildClass= new Intent(parentClass,childClass);
+        passDataToChildClass.putExtra("mDataFromIntent",movieDataFromAdapterForIntent.getPosterPath());
+        passDataToChildClass.putExtra("mDataFromIntent1",movieDataFromAdapterForIntent.getOriginalTitle());
+        passDataToChildClass.putExtra("mDataFromIntent2",movieDataFromAdapterForIntent.getOverview());
+        passDataToChildClass.putExtra("mDataFromIntent3",movieDataFromAdapterForIntent.getVoteAverage());
+        passDataToChildClass.putExtra("mDataFromIntent4",movieDataFromAdapterForIntent.getReleaseDate());
 
+        Log.d(TAG1,"THE data passing from the intent is ;;;;;;;;;;;;;;;;;;*********************"+movieDataFromAdapterForIntent.getPosterPath());
+        Log.d(TAG1,"THE data passing from the intent is ;;;;;;;;;;;;;;;;;;*********************"+movieDataFromAdapterForIntent.getOriginalTitle());
+        Log.d(TAG1,"THE data passing from the intent is ;;;;;;;;;;;;;;;;;;*********************"+movieDataFromAdapterForIntent.getOverview());
+        Log.d(TAG1,"THE data passing from the intent is ;;;;;;;;;;;;;;;;;;*********************"+movieDataFromAdapterForIntent.getReleaseDate());
+        Log.d(TAG1,"THE data passing from the intent is ;;;;;;;;;;;;;;;;;;*********************"+movieDataFromAdapterForIntent.getVoteAverage());
+        startActivity(passDataToChildClass);
+
+//        if(passDataToChildClass.resolveActivity(getPackageManager())!=null)
+//        {
+//            startActivity(passDataToChildClass);
+//        }
     }
 
     public static class MovieTask extends AsyncTask<URL ,Void, List<Result>>{
@@ -92,6 +114,14 @@ public class MainActivity extends AppCompatActivity implements AdapterForRecycle
                 movieAdapter.setData(movieSearchReults);
                 movieAdapter.notifyDataSetChanged();
             }
+            else
+            {
+                tv_showData.setVisibility(View.VISIBLE);
+                tv_showData.setText(R.string.noInternetMessage);
+
+
+                Log.d(TAG1, "the value in the tv_showData Text View is:" +tv_showData.getText());
+            }
         }
 
     }
@@ -104,10 +134,10 @@ public class MainActivity extends AppCompatActivity implements AdapterForRecycle
         return true;
     }
 
-    public static void makePopularUrl()
+    public static void makeUrl(String urlpass)
     {
             //String movieUrl = null;
-            URL builtUrl = NetworkUtils.urlForPopular();
+            URL builtUrl = NetworkUtils.urlForPopular(urlpass);
             new MovieTask().execute(builtUrl);
     }
 
@@ -116,14 +146,29 @@ public class MainActivity extends AppCompatActivity implements AdapterForRecycle
         int ItemOfMenu=item.getItemId();
         if(ItemOfMenu==R.id.mostPopular)
         {
-            //Context context=MainActivity.this;
-            //Toast.makeText(this, "You clicked most popular", Toast.LENGTH_SHORT).show();
+
+            movieAdapter.setData(null);
+            movieAdapter.notifyDataSetChanged();
+            makeUrl(NetworkUtils.getPopularUrl());
+            return true;
+
 
         }
         if (ItemOfMenu==R.id.topRated)
         {
-            Context context=MainActivity.this;
-            Toast.makeText(this, "you clicked top rated", Toast.LENGTH_SHORT).show();
+
+            movieAdapter.setData(null);
+            movieAdapter.notifyDataSetChanged();
+            makeUrl(NetworkUtils.getTopRatedUrl());
+            return true;
+            }
+        if(ItemOfMenu==R.id.refreshButton)
+        {
+
+            movieAdapter.setData(null);
+            movieAdapter.notifyDataSetChanged();
+            makeUrl(NetworkUtils.getBaseUrl());
+            return true;
         }
         return super.onOptionsItemSelected(item);
 

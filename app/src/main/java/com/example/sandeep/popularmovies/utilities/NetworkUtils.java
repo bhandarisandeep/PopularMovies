@@ -24,7 +24,7 @@ import java.util.Scanner;
 public class NetworkUtils {
     //final static String MOVIE_BASE_URL ="http://api.themoviedb.org/3/movie/popular?api_key=";
     final static String API_KEY = "c5c35022248742ba11be0bde409c1caf";   // replace this with your api key
-    final static String BASE_URL = "http://api.themoviedb.org/3/movie";   //this is the base url to call for the movie json data
+    final static String BASE_URL = "http://api.themoviedb.org/3/movie/now_playing";   //this is the base url to call for the movie json data
     final static String BASE_IMAGES_URL = "http://image.tmdb.org/t/p/";
     final static String IMAGE_SIZE = "w185";
     final static String SORT_POPULAR="popular";
@@ -35,6 +35,21 @@ public class NetworkUtils {
     final static String BASE_TOP_RATED_URL="http://api.themoviedb.org/3/movie/top_rated";
     final static String PARAM_KEY="api_key";
     final static String FULL_IMAGE_URL="http://image.tmdb.org/t/p/w185";
+
+    public static String getPopularUrl()
+    {
+        return BASE_POPULAR_URL;
+    }
+
+    public static String getTopRatedUrl()
+    {
+        return BASE_TOP_RATED_URL;
+    }
+    public static String getBaseUrl()
+    {
+        return BASE_URL;
+    }
+
 /*
  * we will be using three methods:
   * one for popular,
@@ -43,8 +58,8 @@ public class NetworkUtils {
 
 
  */
-public  static URL urlForPopular(){
-    Uri uri= Uri.parse(BASE_POPULAR_URL).buildUpon()
+public  static URL urlForPopular(String urlname){
+    Uri uri= Uri.parse(urlname).buildUpon()
             .appendQueryParameter(PARAM_KEY,API_KEY).build();
 
 

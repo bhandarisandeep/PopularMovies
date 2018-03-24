@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">Popular Movies </string>
+    <string name="app_name">The Movie DataBase </string>
 
     <string name="menuTitle1">Most Popular</string>
     <string name="menuTitle2">Top Rated</string>
+    <string name="noInternetMessage">Sorry No Internet Connnection!!! </string>
+    <string name="tryAgainMessage">Please try again...</string>
 </resources>
