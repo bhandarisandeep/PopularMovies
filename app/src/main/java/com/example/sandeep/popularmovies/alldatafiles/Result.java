@@ -1,4 +1,4 @@
-package com.example.sandeep.popularmovies.DataFiles;
+package com.example.sandeep.popularmovies.alldatafiles;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,5 +1,5 @@
 
-        package com.example.sandeep.popularmovies.DataFiles;
+        package com.example.sandeep.popularmovies.alldatafiles;
 
         import java.util.List;
         import com.google.gson.annotations.Expose;

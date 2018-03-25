@@ -9,17 +9,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.sandeep.popularmovies.DataFiles.AdapterForRecyclerView;
-import com.example.sandeep.popularmovies.DataFiles.Result;
+import com.example.sandeep.popularmovies.alldatafiles.AdapterForRecyclerView;
+import com.example.sandeep.popularmovies.alldatafiles.Result;
 import com.example.sandeep.popularmovies.utilities.NetworkUtils;
 
 import java.io.IOException;
