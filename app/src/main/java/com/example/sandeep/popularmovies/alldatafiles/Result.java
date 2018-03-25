@@ -135,6 +135,8 @@ public class Result implements Parcelable {
         releaseDate = in.readString();
     }
 
+    /*The read and write step in the parcel is in the same order so that it can be passed to intent properly*/
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
